@@ -1,0 +1,34 @@
+{
+  "App": {
+    "env": "local",
+    "enableLogging": true,
+    "baseURL": "http://localhost:3000/",
+    "appDomain": "localhost",
+    "baseAPIURL": "https://localhost:5000/"
+  },
+  "Database": {
+    "URI": "mongodb://localhost:27017",
+    "DBName": "tde",
+    "options": {
+      "useNewUrlParser": true,
+      "useUnifiedTopology": true
+    },
+    "Collections": [
+      "impressions", "questions", "surveys", "results", "users"
+    ]
+  },
+  "Websocket": {
+    "port": 5005,
+    "path": "ws"
+  },
+  "API": {
+    "port": 5000,
+    "basePath": "",
+    "clusterCount": 2
+  },
+  "Redis": {
+    "enabled" : false,
+    "NAMESPACE" : "TDE-",
+    "url" : "redis://username:password@host:port"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "App": {
+    "env": "dev",
+    "enableLogging": true,
+    "baseURL": "http://localhost:3000/",
+    "appDomain": "localhost",
+    "baseAPIURL": "https://localhost:5000/"
+  },
+  "Database": {
+    "URI": "mongodb+srv://msfirooz:B2flk5q6fq0ckppY@tde.8cc1m.mongodb.net/?retryWrites=true&w=majority&appName=tde",
+    "DBName": "tde",
+    "options": {
+      "useNewUrlParser": true,
+      "useUnifiedTopology": true
+    },
+    "Collections": [
+      "impressions", "questions", "surveys", "results", "users"
+    ]
+  },
+  "Websocket": {
+    "port": 5005,
+    "path": "ws"
+  },
+  "API": {
+    "port": 5000,
+    "basePath": "",
+    "clusterCount": 1
+  },
+  "Redis": {
+    "enabled" : false,
+    "NAMESPACE" : "TDE-",
+    "url" : "redis://username:password@host:port"
+  }
+}

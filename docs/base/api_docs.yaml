@@ -1,0 +1,538 @@
+openapi: 3.0.0
+info:
+  title: TDE API  
+  version: 0.0.1-beta
+paths:
+# Impression PATHS
+  /tde/impression/create:
+      post:
+        summary: create an impression
+        tags:
+            - Impression API
+        requestBody:
+          description: impression elements
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateImpressionRequest"
+        responses:
+          '200':
+            description: Returns an ID for the new impression
+            content:
+              application/json:
+                schema:
+                  type: string
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+  /tde/impression/list/actions:
+      get:
+        summary: view impressions in range
+        tags:
+            - Impression API
+        parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+          description: Beginning date for query
+          required: true
+          example: 2024-10-10 13:54:54
+        - in: query
+          name: endDate
+          schema:
+            type: string
+          description: Ending date for query
+          required: true
+          example: 2024-10-11 11:23:00
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+          example: 0
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+          description: The numbers of items to return
+          example: 20
+        responses:
+          '200':
+            description: Returns a total and detailed report
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    result:
+                      type: object
+                      properties:
+                        totalReport:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              _id:
+                                type: object
+                                properties:
+                                  action:
+                                    type: string
+                                    example: Impression
+                                  surveyId:
+                                    type: string
+                                    example: be28e7c7-d61e-4665-bd91-7b89a1011599
+                                  pageId:
+                                    type: string
+                                    example: 1
+                              count:
+                                type: number
+                                example : 10
+                        count:
+                        detailedReport:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              _id:
+                                type: object
+                                properties:
+                                  action:
+                                    type: string
+                                    example: Impression
+                                  surveyId:
+                                    type: string
+                                    example: be28e7c7-d61e-4665-bd91-7b89a1011599
+                                  pageId:
+                                    type: string
+                                    example: 1
+                                  source:
+                                    type: string
+                                    example: 390
+                              count:
+                                type: number
+                                example : 4
+                        count:
+                          type: number
+                          example: 100
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+# END Impression PATHS
+# Questions PATHS
+  /tde/questions:
+      post:
+        summary: Create/Update
+        tags:
+            - Questions API
+        requestBody:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+          responses:
+            '200':
+              description: Create or update a question
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Question"
+            '400':
+              description: Bad Request
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+      get:
+        summary: Find By List of Ids/ Find All
+        tags:
+            - Questions API
+        parameters:
+        - in: query
+          name: ids
+          schema:
+            type: array
+            items:
+              type: string
+              example: c41353a3-7115-436a-be68-44077d8d8ee0
+          description: IDs
+          required: true
+        responses:
+          '200':
+            description: Returns an array of questions with matching IDs
+            content:
+              application/json:
+                schema:
+                   type: array
+                   items:
+                    $ref: "#/components/schemas/Question"
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+      delete:
+        summary: Delete
+        tags:
+            - Questions API
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: string
+                example: c41353a3-7115-436a-be68-44077d8d8eea
+        responses:
+          '200':
+            description: Returns if the item has been successfully deleted
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    successfullyDeleted:
+                      type: boolean
+          '400':
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+  /tde/questions/conditional:
+    get:
+            summary: Check if question is conditional
+            tags:
+                - Questions API
+            parameters:
+            - in: query
+              name: _id
+              schema:
+                type: string
+                example: c41353a3-7115-436a-be68-44077d8d8ee0
+              description: ID
+              required: true
+            responses:
+              '200':
+                description: Returns an array of questions which the given question is conditional to
+                content:
+                  application/json:
+                    schema:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Question"
+              '400':
+                description: Bad Request
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+  /tde/questions/surveys:
+    get:
+      summary: Find surveys using question
+      tags:
+          - Questions API
+      parameters:
+      - in: query
+        name: _id
+        schema:
+          type: string
+          example: c41353a3-7115-436a-be68-44077d8d8ee0
+        description: ID
+        required: true
+      responses:
+        '200':
+          description: Returns surveys which use the given question
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  surveys:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: 073dee9a-4a84-4d9d-b8aa-9d5bde087865
+                        name:
+                          type: string
+                          example: Kitchen
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+# END Questions PATHS
+# Survey PATHS
+  /tde/surveys:
+        post:
+          summary: Create/Update
+          tags:
+              - Surveys API
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Survey"
+            responses:
+              '200':
+                description: Create or update a question
+                content:
+                  application/json:
+                    schema:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/Question"
+              '400':
+                description: Bad Request
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+        get:
+          summary: Find By List of Ids/ Find All
+          tags:
+              - Surveys API
+          parameters:
+          - in: query
+            name: ids
+            schema:
+              type: array
+              items:
+                type: string
+                example: c41353a3-7115-436a-be68-44077d8d8ee0
+            description: IDs
+            required: true
+          responses:
+            '200':
+              description: Returns an array of surveys with matching IDs
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      surveys:
+                        type: object
+                        properties:
+                            advanced:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  slug:
+                                    type: object
+                                    properties:
+                                      _id:
+                                        type: string
+                                        example: d61d3d83-6790-4912-b9bf-5f8fa2d4fb94
+                                      name:
+                                        type: string
+                                        example: Degrees
+                                      advancedPages: 
+                                        type: object
+                                        description: A hashmap with page as a key and an array of questions as the value.
+                                        properties:
+                                          1:
+                                            type: object
+                                            properties:
+                                              questions:
+                                                type: array
+                                                items:
+                                                  $ref: "#/components/schemas/Question"   
+                            surveys:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  slug:
+                                    $ref: "#/components/schemas/Survey"
+                            questions:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  slug:
+                                    $ref: "#/components/schemas/Question"
+                      
+            '400':
+              description: Bad Request
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+        delete:
+          summary: Delete
+          tags:
+              - Surveys API
+          requestBody:
+            content:
+              application/json:
+                schema:
+                  type: string
+                  example: d61d3d83-6790-4912-b9bf-5f8fa2d4fb92
+          responses:
+            '200':
+              description: Returns if the item has been successfully deleted
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      successfullyDeleted:
+                        type: boolean
+            '400':
+              description: Bad Request
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+    
+components:
+  schemas:
+    CreateImpressionRequest:
+          type: object
+          properties:
+            surveyId:
+              type: string
+              example: db7847c3-bcdd-443f-8367-9abfa6eaba28
+            pageId:
+              type: number
+              example : 1
+            action:
+              type: number
+              example : 1
+            userHash:
+              type: string
+              example : e6a9f855b49bbadf18ab0cdd5c0750fb
+            ip:
+              type: string
+              exampe: ::1
+            userAgent:
+              type: string
+              example: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36
+            appId:
+              type: number
+              example: f4ff87c4-5775-41e1-8922-d0ac5f68873c
+            surveyAnswers:
+              type: object
+            queryParams:
+              type: object
+    Question:
+          type: object
+          properties:
+            _id:
+              type: string
+              example: c41353a3-7115-436a-be68-44077d8d8ee0
+            name:
+              type: string
+              example: Kitchen work needed
+              required: true
+            type:
+              type: string
+              example: multi-choice
+              required: true
+            question:
+              type: string
+              example: What do you need worked on?
+              required: true
+            key:
+              type: string
+              example: projecttype
+              required: true
+            subheader:
+              type: string
+            header:
+              type: string
+            answers:
+              type: array
+              items:
+                type: object
+                properties:
+                 text:
+                    type: string
+                    example : Appliances
+              required: true
+            createdAt:
+              type: string
+              example: 2023-12-12T18:55:55.648Z
+            modifiedAt:
+              type: string
+              example: 2024-10-16 05:04:28
+            triggerContinueSurvey:
+              type: boolean
+              example: true
+    Survey:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: d61d3d83-6790-4912-b9bf-5f8fa2d4fb94
+        name:
+          type: string
+          example: Degrees
+          required: true
+        affiliates:
+          type: array
+          items:
+            type: string
+            example : f4ff87c4-5775-41e1-8922-d0ac5f68873c
+          required: true
+        advancedPages:
+          type: object
+          description: A hashmap with page as a key and an array of questions as the value.
+          properties:
+            1:
+              type: object
+              properties:
+                questions:
+                  type: array
+                  items:
+                    type: string
+                    example : c02ef31f-85b7-4167-a73e-dd084f0f1e5f
+        createdAt:
+          type: string
+          example: 2023-12-12T18:55:55.648Z
+        modifiedAt:
+          type: string
+          example: 2024-10-16 05:04:28
